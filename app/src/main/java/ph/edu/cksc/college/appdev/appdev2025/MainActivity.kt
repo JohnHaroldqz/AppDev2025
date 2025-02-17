@@ -1,10 +1,12 @@
 package ph.edu.cksc.college.appdev.appdev2025
 
 import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
@@ -21,6 +23,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -35,7 +39,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import ph.edu.cksc.college.appdev.appdev2025.data.DiaryEntry
+import ph.edu.cksc.college.appdev.appdev2025.data.SampleDiaryEntries
+import ph.edu.cksc.college.appdev.appdev2025.data.moodList
 import ph.edu.cksc.college.appdev.appdev2025.ui.theme.AppDev2025Theme
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,42 +52,41 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             AppDev2025Theme {
-                Conversation(SampleData.conversationSample)
+                DiaryList(SampleDiaryEntries.entries)
             }
         }
     }
 }
 
 @Composable
-fun Conversation(messages: List<Message>) {
+fun DiaryList(messages: MutableList<DiaryEntry>) {
     LazyColumn {
         items(messages) { message ->
-            MessageCard(message)
+            DiaryEntryCard(message)
         }
     }
 }
 
 @Preview
 @Composable
-fun PreviewConversation() {
+fun PreviewDiaryList() {
     AppDev2025Theme {
-        Conversation(SampleData.conversationSample)
+        DiaryList(SampleDiaryEntries.entries)
     }
 }
 
-data class Message(val author: String, val body: String)
-
 @Composable
-fun MessageCard(msg: Message) {
+fun DiaryEntryCard(entry: DiaryEntry) {
     Row(modifier = Modifier.padding(all = 8.dp)) {
-        Image(
-            painter = painterResource(R.drawable.profile_picture),
-            contentDescription = null,
-            modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-                .border(1.5.dp, MaterialTheme.colorScheme.primary, CircleShape)
-        )
+        IconButton(onClick = {
+            //navController.navigate("$DIARY_ENTRY_SCREEN/${entry.id}")
+        }) {
+            Icon(
+                imageVector = moodList[entry.mood].icon,
+                tint = moodList[entry.mood].color,
+                contentDescription = "About"
+            )
+        }
         Spacer(modifier = Modifier.width(8.dp))
 
         // We keep track if the message is expanded or not in this
@@ -89,10 +97,18 @@ fun MessageCard(msg: Message) {
             if (isExpanded) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
         )
 
+        val formatter = DateTimeFormatter.ofPattern("EEEE MMMM d, yyyy h:mm a")
+        val date = LocalDateTime.parse(entry.dateTime)
+
         // We toggle the isExpanded variable when we click on this Column
         Column(modifier = Modifier.clickable { isExpanded = !isExpanded }) {
             Text(
-                text = msg.author,
+                text = entry.title,
+                color = MaterialTheme.colorScheme.secondary,
+                style = MaterialTheme.typography.titleSmall
+            )
+            Text(
+                text = formatter.format(date),
                 color = MaterialTheme.colorScheme.secondary,
                 style = MaterialTheme.typography.titleSmall
             )
@@ -108,7 +124,7 @@ fun MessageCard(msg: Message) {
                 modifier = Modifier.animateContentSize().padding(1.dp)
             ) {
                 Text(
-                    text = msg.body,
+                    text = entry.content,
                     modifier = Modifier.padding(all = 4.dp),
                     // If the message is expanded, we display all its content
                     // otherwise we only display the first line
@@ -127,11 +143,16 @@ fun MessageCard(msg: Message) {
     name = "Dark Mode"
 )
 @Composable
-fun PreviewMessageCard() {
+fun PreviewDiaryEntryCard() {
     AppDev2025Theme {
         Surface(modifier = Modifier.fillMaxSize()) {
-            MessageCard(
-                msg = Message("Lexi", "Hey, take a look at Jetpack Compose, it's great!")
+            DiaryEntryCard(
+                entry = DiaryEntry(
+                    "1", 0,
+                    "Lexi",
+                    "Test...Test...Test...",
+                    LocalDateTime.of(2024, 1, 1, 7, 30).toString()
+                )
             )
         }
     }
