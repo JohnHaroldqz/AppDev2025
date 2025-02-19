@@ -49,6 +49,8 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
+import ph.edu.cksc.college.appdev.appdev2025.ABOUT_SCREEN
+import ph.edu.cksc.college.appdev.appdev2025.DIARY_ENTRY_SCREEN
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -90,7 +92,7 @@ fun MainScreen(navController: NavHostController) {
                             )
                         }
                         IconButton(onClick = {
-                            navController.navigate("about")
+                            navController.navigate(ABOUT_SCREEN)
                         }) {
                             Icon(
                                 imageVector = Icons.Filled.Info,
@@ -114,7 +116,7 @@ fun MainScreen(navController: NavHostController) {
         },
         floatingActionButton = {
             FloatingActionButton(onClick = {
-                navController.navigate("diaryentry/-1")
+                navController.navigate("$DIARY_ENTRY_SCREEN/-1")
             }) {
                 Icon(Icons.Filled.Add,"")
             }
@@ -163,7 +165,7 @@ fun PreviewDiaryList() {
 fun DiaryEntryCard(entry: DiaryEntry, navController: NavHostController) {
     Row(modifier = Modifier.padding(all = 8.dp)) {
         IconButton(onClick = {
-            //navController.navigate("$DIARY_ENTRY_SCREEN/${entry.id}")
+            navController.navigate("$DIARY_ENTRY_SCREEN/${entry.id}")
         }) {
             Icon(
                 imageVector = moodList[entry.mood].icon,

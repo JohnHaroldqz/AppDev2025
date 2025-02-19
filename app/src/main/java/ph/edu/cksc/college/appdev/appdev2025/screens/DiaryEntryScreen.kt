@@ -39,12 +39,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ph.edu.cksc.college.appdev.appdev2025.data.moodList
+
 import ph.edu.cksc.college.appdev.appdev2025.dialog.DateDialog
 import ph.edu.cksc.college.appdev.appdev2025.dialog.TimeDialog
 import ph.edu.cksc.college.appdev.appdev2025.data.DiaryEntry
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
