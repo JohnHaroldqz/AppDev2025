@@ -3,6 +3,8 @@ package ph.edu.cksc.college.appdev.appdev2025
 const val MAIN_SCREEN = "MainScreen"
 const val ABOUT_SCREEN = "AboutScreen"
 const val DIARY_ENTRY_SCREEN = "DiaryEntryScreen"
+const val MAP_SCREEN = "MapScreen"
+const val REGISTER_SCREEN = "RegisterScreen"
 const val SPLASH_SCREEN = "SplashScreen"
 const val SETTINGS_SCREEN = "SettingsScreen"
 const val LOGIN_SCREEN = "LoginScreen"

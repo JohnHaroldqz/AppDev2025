@@ -20,6 +20,8 @@ import ph.edu.cksc.college.appdev.appdev2025.screens.AboutScreen
 import ph.edu.cksc.college.appdev.appdev2025.screens.DiaryEntryScreen
 import ph.edu.cksc.college.appdev.appdev2025.screens.DiaryEntryView
 import ph.edu.cksc.college.appdev.appdev2025.screens.MainScreen
+import ph.edu.cksc.college.appdev.appdev2025.screens.MapScreen
+import ph.edu.cksc.college.appdev.appdev2025.screens.RegisterScreen
 import ph.edu.cksc.college.appdev.appdev2025.ui.theme.AppDev2025Theme
 import java.time.LocalDateTime
 
@@ -90,6 +92,8 @@ class MainActivity : ComponentActivity() {
         NavHost(navController = navController, startDestination = MAIN_SCREEN) {
             composable(MAIN_SCREEN) { MainScreen(navController) }
             composable(ABOUT_SCREEN) { AboutScreen(navController) }
+            composable(MAP_SCREEN) { MapScreen(navController) }
+            composable(REGISTER_SCREEN) { RegisterScreen(navController) }
             composable("$DIARY_ENTRY_SCREEN/{id}",
                 arguments = listOf(navArgument("id") { type = NavType.StringType })
             ) { backStackEntry ->
