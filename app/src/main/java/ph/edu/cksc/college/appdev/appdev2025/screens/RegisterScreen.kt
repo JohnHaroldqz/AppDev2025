@@ -4,11 +4,13 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -24,9 +26,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ph.edu.cksc.college.appdev.appdev2025.ui.theme.AppDev2025Theme
@@ -73,24 +77,30 @@ fun RegisterScreen(navController: NavHostController) {
 @Composable
 fun RegisterScrollContent(innerPadding: PaddingValues) {
     var data by mutableStateOf(RegistrationData())
+    var userName by rememberSaveable { mutableStateOf("") }
+    var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
+    var retypePassword by rememberSaveable { mutableStateOf("") }
+    var error by rememberSaveable { mutableStateOf("") }
+
     Box(
         modifier = Modifier.padding(innerPadding)
+            .padding(4.dp)
     ) {
         Column() {
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
-                value = data.userName,
+                value = userName,
                 onValueChange = {
-                    data = data.copy(userName = it)
+                    userName = it
                 },
                 label = { Text("User name") }
             )
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
-                value = data.email,
+                value = email,
                 onValueChange = {
-                    data = data.copy(email = it)
+                    email = it
                 },
                 label = { Text("Email") }
             )
@@ -106,14 +116,29 @@ fun RegisterScrollContent(innerPadding: PaddingValues) {
             )
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
-                value = data.retypePassword,
+                value = retypePassword,
                 onValueChange = {
-                    data = data.copy(retypePassword = it)
+                    retypePassword = it
                 },
                 label = { Text("Retype Password") },
                 visualTransformation = PasswordVisualTransformation(),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
             )
+            Row(modifier = Modifier.padding(top = 8.dp)) {
+                Button(onClick = { /* handle click */ }) {
+                    Text("Cancel")
+                }
+                Button(onClick = {
+                    error = ""
+                    if (password != retypePassword) {
+                        error = "Password didn't match"
+                    }
+                },
+                    modifier = Modifier.padding(start = 8.dp)) {
+                    Text("Register")
+                }
+            }
+            Text(color = Color.Red, text = error)
         }
     }
 }
