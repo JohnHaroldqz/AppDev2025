@@ -25,6 +25,7 @@ import androidx.compose.material.icons.automirrored.outlined.Login
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.Fastfood
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.PersonAdd
 import androidx.compose.material.icons.outlined.Settings
@@ -60,6 +61,8 @@ import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
 import ph.edu.cksc.college.appdev.appdev2025.ABOUT_SCREEN
 import ph.edu.cksc.college.appdev.appdev2025.DIARY_ENTRY_SCREEN
+import ph.edu.cksc.college.appdev.appdev2025.FAVORITE_FOOD
+import ph.edu.cksc.college.appdev.appdev2025.LOGIN_SCREEN
 import ph.edu.cksc.college.appdev.appdev2025.MAP_SCREEN
 import ph.edu.cksc.college.appdev.appdev2025.R
 import ph.edu.cksc.college.appdev.appdev2025.REGISTER_SCREEN
@@ -113,7 +116,7 @@ fun MainScreen(navController: NavHostController) {
                         label = { Text("Login") },
                         icon = { Icon(Icons.AutoMirrored.Outlined.Login, contentDescription = null) },
                         selected = false,
-                        onClick = { /* Handle click */ }
+                        onClick = {navController.navigate(LOGIN_SCREEN)}
                     )
 
                     HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
@@ -125,6 +128,14 @@ fun MainScreen(navController: NavHostController) {
                         selected = false,
                         onClick = { navController.navigate(MAP_SCREEN) }
                     )
+                    NavigationDrawerItem(
+                        label = { Text("FavoriteFood") },
+                        selected = false,
+                        icon = { Icon(Icons.Outlined.Fastfood, contentDescription = null) },
+                        badge = { Text("20") }, // Placeholder
+                        onClick = { navController.navigate(FAVORITE_FOOD) }
+                    )
+
                     NavigationDrawerItem(
                         label = { Text("Settings") },
                         selected = false,
@@ -263,6 +274,8 @@ fun DiaryEntryCard(entry: DiaryEntry, navController: NavHostController) {
 
         val formatter = DateTimeFormatter.ofPattern("EEEE MMMM d, yyyy h:mm a")
         val date = LocalDateTime.parse(entry.dateTime)
+
+        Text( text = "⭐ ${entry.star}", modifier = Modifier.padding(8.dp) )
 
         // We toggle the isExpanded variable when we click on this Column
         Column(modifier = Modifier.clickable { isExpanded = !isExpanded }) {

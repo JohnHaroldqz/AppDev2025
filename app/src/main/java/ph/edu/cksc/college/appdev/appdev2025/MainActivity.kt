@@ -3,7 +3,6 @@ package ph.edu.cksc.college.appdev.appdev2025
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -19,6 +18,8 @@ import ph.edu.cksc.college.appdev.appdev2025.data.SampleDiaryEntries
 import ph.edu.cksc.college.appdev.appdev2025.screens.AboutScreen
 import ph.edu.cksc.college.appdev.appdev2025.screens.DiaryEntryScreen
 import ph.edu.cksc.college.appdev.appdev2025.screens.DiaryEntryView
+import ph.edu.cksc.college.appdev.appdev2025.screens.FavoriteFoodScreen
+import ph.edu.cksc.college.appdev.appdev2025.screens.LoginScreen
 import ph.edu.cksc.college.appdev.appdev2025.screens.MainScreen
 import ph.edu.cksc.college.appdev.appdev2025.screens.MapScreen
 import ph.edu.cksc.college.appdev.appdev2025.screens.RegisterScreen
@@ -93,7 +94,9 @@ class MainActivity : ComponentActivity() {
             composable(MAIN_SCREEN) { MainScreen(navController) }
             composable(ABOUT_SCREEN) { AboutScreen(navController) }
             composable(MAP_SCREEN) { MapScreen(navController) }
+            composable(FAVORITE_FOOD) { FavoriteFoodScreen(navController) }
             composable(REGISTER_SCREEN) { RegisterScreen(navController) }
+            composable(LOGIN_SCREEN) { LoginScreen(navController) }
             composable("$DIARY_ENTRY_SCREEN/{id}",
                 arguments = listOf(navArgument("id") { type = NavType.StringType })
             ) { backStackEntry ->
