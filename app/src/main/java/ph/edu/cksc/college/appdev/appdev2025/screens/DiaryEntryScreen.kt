@@ -43,6 +43,7 @@ import ph.edu.cksc.college.appdev.appdev2025.data.moodList
 import ph.edu.cksc.college.appdev.appdev2025.dialog.DateDialog
 import ph.edu.cksc.college.appdev.appdev2025.dialog.TimeDialog
 import ph.edu.cksc.college.appdev.appdev2025.data.DiaryEntry
+import ph.edu.cksc.college.appdev.appdev2025.ui.theme.AppDev2025Theme
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -270,38 +271,46 @@ fun DiaryEntry(
 @Composable
 fun EditDiaryPreview() {
     val navController = rememberNavController()
-    DiaryEntryScreen(
-        viewModel = object: DiaryEntryView {
-            @SuppressLint("UnrememberedMutableState")
-            override val diaryEntry = mutableStateOf(DiaryEntry())
-            init {
-                diaryEntry.value = DiaryEntry(
-                    "merong-id",
-                    0,
-                    "Lexi",
-                    "Test...Test...Test...",
-                    LocalDateTime.of(2024, 1, 1, 7, 30).toString()
-                )
-            }
-            override var modified: Boolean = true
+    AppDev2025Theme(dynamicColor = false) {
+        DiaryEntryScreen(
+            viewModel = object : DiaryEntryView {
+                @SuppressLint("UnrememberedMutableState")
+                override val diaryEntry = mutableStateOf(DiaryEntry())
 
-            override fun onTitleChange(newValue: String) {
-                diaryEntry.value = diaryEntry.value.copy(title = newValue)
-            }
-            override fun onContentChange(newValue: String) {
-                diaryEntry.value = diaryEntry.value.copy(content = newValue)
-            }
-            override fun onMoodChange(newValue: Int) {
-                diaryEntry.value = diaryEntry.value.copy(mood = newValue)
-            }
-            override fun onDateTimeChange(newValue: LocalDateTime) {
-                val newDueDate = newValue.toString()
-                diaryEntry.value = diaryEntry.value.copy(dateTime = newDueDate)
-            }
-            override fun onDoneClick(popUpScreen: () -> Unit) {
+                init {
+                    diaryEntry.value = DiaryEntry(
+                        "merong-id",
+                        0,
+                        "Lexi",
+                        "Test...Test...Test...",
+                        LocalDateTime.of(2024, 1, 1, 7, 30).toString()
+                    )
+                }
 
-            }
-        },
-        navController = navController
-    )
+                override var modified: Boolean = true
+
+                override fun onTitleChange(newValue: String) {
+                    diaryEntry.value = diaryEntry.value.copy(title = newValue)
+                }
+
+                override fun onContentChange(newValue: String) {
+                    diaryEntry.value = diaryEntry.value.copy(content = newValue)
+                }
+
+                override fun onMoodChange(newValue: Int) {
+                    diaryEntry.value = diaryEntry.value.copy(mood = newValue)
+                }
+
+                override fun onDateTimeChange(newValue: LocalDateTime) {
+                    val newDueDate = newValue.toString()
+                    diaryEntry.value = diaryEntry.value.copy(dateTime = newDueDate)
+                }
+
+                override fun onDoneClick(popUpScreen: () -> Unit) {
+
+                }
+            },
+            navController = navController
+        )
+    }
 }

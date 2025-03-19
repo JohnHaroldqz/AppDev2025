@@ -146,8 +146,10 @@ fun RegisterScrollContent(innerPadding: PaddingValues) {
 @Preview()
 @Composable
 fun PreviewRegisterScreen() {
+
     val navController = rememberNavController()
-    AppDev2025Theme {
-        RegisterScreen(navController)
+    AppDev2025Theme(dynamicColor = false) {
+
+    RegisterScreen(navController)
     }
 }

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -247,67 +248,75 @@ fun DiaryList(messages: MutableList<DiaryEntry>) {
 @Composable
 fun PreviewMainScreen() {
     val navController = rememberNavController()
-    MainScreen(navController)
+    AppDev2025Theme(dynamicColor = false) {
+        MainScreen(navController)
+    }
 }
 
 @Composable
 fun DiaryEntryCard(entry: DiaryEntry, navController: NavHostController) {
-    Row(modifier = Modifier.padding(all = 8.dp)) {
-        IconButton(onClick = {
-            navController.navigate("$DIARY_ENTRY_SCREEN/${entry.id}")
-        }) {
-            Icon(
-                imageVector = moodList[entry.mood].icon,
-                tint = moodList[entry.mood].color,
-                contentDescription = "About"
-            )
-        }
-        Spacer(modifier = Modifier.width(8.dp))
-
-        // We keep track if the message is expanded or not in this
-        // variable
-        var isExpanded by remember { mutableStateOf(false) }
-        // surfaceColor will be updated gradually from one color to the other
-        val surfaceColor by animateColorAsState(
-            if (isExpanded) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
-        )
-
-        val formatter = DateTimeFormatter.ofPattern("EEEE MMMM d, yyyy h:mm a")
-        val date = LocalDateTime.parse(entry.dateTime)
-
-        Text( text = "⭐ ${entry.star}", modifier = Modifier.padding(8.dp) )
-
-        // We toggle the isExpanded variable when we click on this Column
-        Column(modifier = Modifier.clickable { isExpanded = !isExpanded }) {
-            Text(
-                text = entry.title,
-                color = MaterialTheme.colorScheme.secondary,
-                style = MaterialTheme.typography.titleSmall
-            )
-            Text(
-                text = formatter.format(date),
-                color = MaterialTheme.colorScheme.secondary,
-                style = MaterialTheme.typography.titleSmall
-            )
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Surface(
-                shape = MaterialTheme.shapes.medium,
-                shadowElevation = 1.dp,
-                // surfaceColor color will be changing gradually from primary to surface
-                color = surfaceColor,
-                // animateContentSize will change the Surface size gradually
-                modifier = Modifier.animateContentSize().padding(1.dp)
-            ) {
-                Text(
-                    text = entry.content,
-                    modifier = Modifier.padding(all = 4.dp),
-                    // If the message is expanded, we display all its content
-                    // otherwise we only display the first line
-                    maxLines = if (isExpanded) Int.MAX_VALUE else 1,
-                    style = MaterialTheme.typography.bodyMedium
+    Surface(tonalElevation = 5.dp,
+        modifier = Modifier.padding(2.dp)
+    ) {
+        Row(modifier = Modifier
+            .padding(all = 8.dp)
+            .fillMaxWidth()
+        ) {
+            IconButton(onClick = {
+                navController.navigate("$DIARY_ENTRY_SCREEN/${entry.id}")
+            }) {
+                Icon(
+                    imageVector = moodList[entry.mood].icon,
+                    tint = moodList[entry.mood].color,
+                    contentDescription = "About"
                 )
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+
+            // We keep track if the message is expanded or not in this
+            // variable
+            var isExpanded by remember { mutableStateOf(false) }
+            // surfaceColor will be updated gradually from one color to the other
+            val surfaceColor by animateColorAsState(
+                if (isExpanded) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
+            )
+
+            val formatter = DateTimeFormatter.ofPattern("EEEE MMMM d, yyyy h:mm a")
+            val date = LocalDateTime.parse(entry.dateTime)
+
+
+            // We toggle the isExpanded variable when we click on this Column
+            Column(modifier = Modifier.clickable { isExpanded = !isExpanded }) {
+                Text(
+                    text = entry.title,
+                    color = MaterialTheme.colorScheme.secondary,
+                    style = MaterialTheme.typography.titleSmall
+                )
+                Text(
+                    text = formatter.format(date),
+                    color = MaterialTheme.colorScheme.secondary,
+                    style = MaterialTheme.typography.titleSmall
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Surface(
+                    shape = MaterialTheme.shapes.medium,
+                    shadowElevation = 1.dp,
+                    // surfaceColor color will be changing gradually from primary to surface
+                    color = surfaceColor,
+                    // animateContentSize will change the Surface size gradually
+                    modifier = Modifier.animateContentSize().padding(1.dp)
+                ) {
+                    Text(
+                        text = entry.content,
+                        modifier = Modifier.padding(all = 4.dp),
+                        // If the message is expanded, we display all its content
+                        // otherwise we only display the first line
+                        maxLines = if (isExpanded) Int.MAX_VALUE else 1,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
             }
         }
     }
