@@ -13,13 +13,16 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import ph.edu.cksc.college.appdev.appdev2025.data.DiaryEntry
 import ph.edu.cksc.college.appdev.appdev2025.data.SampleDiaryEntries
 import ph.edu.cksc.college.appdev.appdev2025.screens.AboutScreen
+import ph.edu.cksc.college.appdev.appdev2025.screens.AuthScreen
 import ph.edu.cksc.college.appdev.appdev2025.screens.DiaryEntryScreen
 import ph.edu.cksc.college.appdev.appdev2025.screens.DiaryEntryView
-import ph.edu.cksc.college.appdev.appdev2025.screens.FavoriteFoodScreen
-import ph.edu.cksc.college.appdev.appdev2025.screens.LoginScreen
 import ph.edu.cksc.college.appdev.appdev2025.screens.MainScreen
 import ph.edu.cksc.college.appdev.appdev2025.screens.MapScreen
 import ph.edu.cksc.college.appdev.appdev2025.screens.RegisterScreen
@@ -27,9 +30,17 @@ import ph.edu.cksc.college.appdev.appdev2025.ui.theme.AppDev2025Theme
 import java.time.LocalDateTime
 
 class MainActivity : ComponentActivity() {
+
+    private lateinit var auth: FirebaseAuth
+    private lateinit var firestore: FirebaseFirestore
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        auth = FirebaseAuth.getInstance()
+        firestore = Firebase.firestore
+
         setContent {
             AppDev2025Theme {
                 // Simple Navigation patterned after
@@ -90,13 +101,13 @@ class MainActivity : ComponentActivity() {
                 navController.popBackStack()
             }
         }
-        NavHost(navController = navController, startDestination = MAIN_SCREEN) {
-            composable(MAIN_SCREEN) { MainScreen(navController) }
+        NavHost(navController = navController, startDestination = AUTH_SCREEN) {
+            composable(AUTH_SCREEN) { AuthScreen(navController, auth, firestore)
+            }
+            composable(MAIN_SCREEN) { MainScreen(navController, auth, firestore) }
             composable(ABOUT_SCREEN) { AboutScreen(navController) }
             composable(MAP_SCREEN) { MapScreen(navController) }
-            composable(FAVORITE_FOOD) { FavoriteFoodScreen(navController) }
             composable(REGISTER_SCREEN) { RegisterScreen(navController) }
-            composable(LOGIN_SCREEN) { LoginScreen(navController) }
             composable("$DIARY_ENTRY_SCREEN/{id}",
                 arguments = listOf(navArgument("id") { type = NavType.StringType })
             ) { backStackEntry ->

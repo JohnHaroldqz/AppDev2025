@@ -1,6 +1,7 @@
 package ph.edu.cksc.college.appdev.appdev2025.screens
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
@@ -26,7 +27,6 @@ import androidx.compose.material.icons.automirrored.outlined.Login
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.outlined.Fastfood
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.PersonAdd
 import androidx.compose.material.icons.outlined.Settings
@@ -47,6 +47,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -59,27 +60,35 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 import ph.edu.cksc.college.appdev.appdev2025.ABOUT_SCREEN
 import ph.edu.cksc.college.appdev.appdev2025.DIARY_ENTRY_SCREEN
-import ph.edu.cksc.college.appdev.appdev2025.FAVORITE_FOOD
-import ph.edu.cksc.college.appdev.appdev2025.LOGIN_SCREEN
 import ph.edu.cksc.college.appdev.appdev2025.MAP_SCREEN
 import ph.edu.cksc.college.appdev.appdev2025.R
 import ph.edu.cksc.college.appdev.appdev2025.REGISTER_SCREEN
 import ph.edu.cksc.college.appdev.appdev2025.data.DiaryEntry
-import ph.edu.cksc.college.appdev.appdev2025.data.SampleDiaryEntries
 import ph.edu.cksc.college.appdev.appdev2025.data.moodList
+import ph.edu.cksc.college.appdev.appdev2025.service.StorageService
 import ph.edu.cksc.college.appdev.appdev2025.ui.theme.AppDev2025Theme
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(navController: NavHostController) {
+fun MainScreen(
+    navController: NavHostController,
+    auth: FirebaseAuth, firestore: FirebaseFirestore
+) {
+    val storageService = StorageService(auth, firestore)
     val context = LocalContext.current
     var searchQuery by remember { mutableStateOf("") }
-    val dataList = SampleDiaryEntries.entries   //viewModel.filterText(searchQuery).collectAsState(initial = emptyList())
+    val dataList = storageService.entries.collectAsState(emptyList())
+    //val dataList = SampleDiaryEntries.entries   //viewModel.filterText(searchQuery).collectAsState(initial = emptyList())
+    Log.d("User", storageService.currentUser.toString())
 
     var isSearchExpanded by remember { mutableStateOf(false) }
 
@@ -96,7 +105,7 @@ fun MainScreen(navController: NavHostController) {
                     Spacer(Modifier.height(12.dp))
                     Text("My Diary", modifier = Modifier.padding(16.dp), style = MaterialTheme.typography.titleLarge)
                     Image(
-                        painter = painterResource(R.drawable.diary_icon_svg),
+                        painter = painterResource(R.drawable.diary_icon),
                         contentDescription = "Contact profile picture",
                         modifier = Modifier
                             .size(96.dp)
@@ -106,7 +115,7 @@ fun MainScreen(navController: NavHostController) {
                     )
                     HorizontalDivider()
 
-                    Text("User", modifier = Modifier.padding(16.dp), style = MaterialTheme.typography.titleMedium)
+                    Text("User " + auth.currentUser?.email, modifier = Modifier.padding(16.dp), style = MaterialTheme.typography.titleMedium)
                     NavigationDrawerItem(
                         label = { Text("Register") },
                         icon = { Icon(Icons.Outlined.PersonAdd, contentDescription = null) },
@@ -117,7 +126,7 @@ fun MainScreen(navController: NavHostController) {
                         label = { Text("Login") },
                         icon = { Icon(Icons.AutoMirrored.Outlined.Login, contentDescription = null) },
                         selected = false,
-                        onClick = {navController.navigate(LOGIN_SCREEN)}
+                        onClick = { /* Handle click */ }
                     )
 
                     HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
@@ -129,14 +138,6 @@ fun MainScreen(navController: NavHostController) {
                         selected = false,
                         onClick = { navController.navigate(MAP_SCREEN) }
                     )
-                    NavigationDrawerItem(
-                        label = { Text("FavoriteFood") },
-                        selected = false,
-                        icon = { Icon(Icons.Outlined.Fastfood, contentDescription = null) },
-                        badge = { Text("20") }, // Placeholder
-                        onClick = { navController.navigate(FAVORITE_FOOD) }
-                    )
-
                     NavigationDrawerItem(
                         label = { Text("Settings") },
                         selected = false,
@@ -212,14 +213,14 @@ fun MainScreen(navController: NavHostController) {
                 }
             }
         ) { innerPadding ->
-            MainScrollContent(dataList, innerPadding, navController)
+            MainScrollContent(dataList.value, innerPadding, navController)
         }
     }
 }
 
 @Composable
 fun MainScrollContent(
-    dataList: MutableList<DiaryEntry>,
+    dataList: List<DiaryEntry>,
     innerPadding: PaddingValues,
     navController: NavHostController
 ) {
@@ -249,7 +250,7 @@ fun DiaryList(messages: MutableList<DiaryEntry>) {
 fun PreviewMainScreen() {
     val navController = rememberNavController()
     AppDev2025Theme(dynamicColor = false) {
-        MainScreen(navController)
+        MainScreen(navController, FirebaseAuth.getInstance(), Firebase.firestore)
     }
 }
 
@@ -283,7 +284,6 @@ fun DiaryEntryCard(entry: DiaryEntry, navController: NavHostController) {
 
             val formatter = DateTimeFormatter.ofPattern("EEEE MMMM d, yyyy h:mm a")
             val date = LocalDateTime.parse(entry.dateTime)
-
 
             // We toggle the isExpanded variable when we click on this Column
             Column(modifier = Modifier.clickable { isExpanded = !isExpanded }) {
@@ -331,7 +331,7 @@ fun DiaryEntryCard(entry: DiaryEntry, navController: NavHostController) {
 @Composable
 fun PreviewDiaryEntryCard() {
     val navController = rememberNavController()
-    AppDev2025Theme {
+    AppDev2025Theme(dynamicColor = false) {
         Surface(modifier = Modifier.fillMaxSize()) {
             DiaryEntryCard(
                 entry = DiaryEntry(

@@ -1,6 +1,5 @@
 package ph.edu.cksc.college.appdev.appdev2025.dialog
 
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
